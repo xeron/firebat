@@ -1,0 +1,15 @@
+database:
+  adapter: mysql
+  database: database
+  username: user
+  password: password
+  host: localhost
+irc:
+  - ident: bot
+    nick: FireBat
+    username: bot
+    server: irc.myserver.org
+    port: 6667
+    nspassword: mynickservpass
+    channels: "#mychannel"
+    charset: cp1251
