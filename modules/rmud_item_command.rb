@@ -63,7 +63,7 @@ class RmudItemCommand < FireBatCommand
   end
 
   def privmsg_filter( cmd )
-    cmd.args(1,0) == "!it"
+    cmd.args(1,0) == "!item"
   end
 
   class RmudItem < ActiveRecord::Base

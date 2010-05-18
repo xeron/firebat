@@ -63,7 +63,7 @@ class SowItemCommand < FireBatCommand
   end
 
   def privmsg_filter( cmd )
-    cmd.args(1,0) == "!item"
+    cmd.args(1,0) == "!it"
   end
 
   class SowItem < ActiveRecord::Base

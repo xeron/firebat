@@ -18,23 +18,15 @@ class DekeiCommand < FireBatCommand
   end
   
   def full
-    msg = "Найдено: ["
-    Dekei.find(:all,["items <> ''"], :order => "name").each do |d|
-      msg += d.items + ", "
-    end
-    msg.chop!
-    msg.chop!
-    msg += "]" 
+    msg = "Найдено: [" +
+    Dekei.find(:all,["items <> ''"], :order => "name").map(&:items).join(", ") +
+    "]"
   end
   
   def list
-    msg = "Найдено: ["
-    Dekei.find(:all,["items <> ''"], :order => "name").each do |d|
-      msg += d.name + ", "
-    end
-    msg.chop!
-    msg.chop!
-    msg += "]" 
+    msg = "Найдено: [" +
+    Dekei.find(:all,["items <> ''"], :order => "name").map(&:name).join(", ") +
+    "]"
   end
   
   def info(name)
@@ -45,7 +37,7 @@ class DekeiCommand < FireBatCommand
       "Не найдено (#{name})"
     end
   end
-
+  
   def add(name, items, nick)
     if d = Dekei.find_by_name(name)
       new = "#{d.items}, #{items}";
@@ -83,8 +75,8 @@ Actions:
 !дикей + <имя> <вещи> => Добавляет в список нового персонажа, либо добавляет к имеющемуся персонажу <вещи>
 !дикей - <имя> => Удаляет из списка персонажа
 !дикей - <имя> <вещи> => Удаляет из списка дикеев персонажа <вещи>"
-	 reply cmd.nick, msg
-	 msg = ""
+    reply cmd.nick, msg
+    msg = ""
   end
   
   def privmsg_filter( cmd )

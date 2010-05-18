@@ -17,18 +17,14 @@ class PkCommand < FireBatCommand
   end
   
   def list
-    msg = "Найдено: ["
-    Pk.find(:all, :order => "name").each do |p|
-      msg += p.name + ", "
-    end
-    msg.chop!
-    msg.chop!
-    msg += "]" 
+    msg = "Найдено: [" +
+    Pk.find(:all, :order => "name").map(&:name).join(", ") +
+    "]"
   end
   
   def info(name)
     name = "%#{name}%"
-    if p = Pk.find(:first, :conditions => ["name like ?",name])
+    if p = Pk.find(:first, :conditions => ["name like ?", name])
       "Найдено: #{p.name}. Добавил: #{p.by}\nПричина: #{p.reason}"
     else
       "Не найдено (#{name})"
@@ -61,8 +57,8 @@ Actions:
 !пк <имя> => Показывает персонажа и причину
 !пк + <имя> <причина> => Добавляет в список, либо обновляет причину
 !пк - <имя> => Удаляет из списка"
-	 reply cmd.nick, msg
-	 msg = ""
+    reply cmd.nick, msg
+    msg = ""
   end
   
   def privmsg_filter( cmd )
