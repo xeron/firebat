@@ -4,6 +4,9 @@ database:
   username: user
   password: password
   host: localhost
+  pool: 5
+  timeout: 5000
+  encoding: utf8
 irc:
   - ident: bot
     nick: FireBat
