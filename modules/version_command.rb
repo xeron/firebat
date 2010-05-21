@@ -1,7 +1,7 @@
 class VersionCommand < FireBatCommand
 
   def on_privmsg(cmd)
-    @irc.privmsg cmd.reply, "FireBat IRC Bot v0.1.30. Programming by ru: core, modules && Xeron: modules"
+    @irc.privmsg cmd.reply, "FireBat IRC Bot v0.2. Programming by ru: core, modules && Xeron: modules"
   end
   
   def privmsg_filter(cmd)
