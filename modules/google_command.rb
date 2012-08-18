@@ -1,3 +1,5 @@
+# coding: utf-8
+
 class GoogleCommand < FireBatCommand
 
   def on_privmsg(cmd)

@@ -1,1 +1,0 @@
-puts "use rake install"

@@ -1,5 +1,6 @@
+# coding: utf-8
+
 class HelpCommand < FireBatCommand
-  
   def on_privmsg( cmd )
     reply cmd.nick,
 "Краткая справка по командам:
@@ -13,7 +14,7 @@ class HelpCommand < FireBatCommand
 !version - версия бота
 identify <pass> - авторизация у бота (делайте это в привате)"
   end
-  
+
   def privmsg_filter( cmd )
     cmd.args(1,0) == "!help"
   end

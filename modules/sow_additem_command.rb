@@ -1,3 +1,5 @@
+# coding: utf-8
+
 class SowAdditemCommand < FireBatCommand
   # require_roles :oper
 

@@ -1,3 +1,5 @@
+# coding: utf-8
+
 class BorCommand < FireBatCommand
 
   def on_privmsg(cmd)
@@ -45,14 +47,14 @@ class BorCommand < FireBatCommand
         t.column :num,  :integer
         t.column :text, :text
       end
+      add_index :borquotes, :num, :unique => true
     end
   end
 
-  def self.install    
-    unless Seen.table_exists?
-      Seen::Install.migrate :up
+  def self.install
+    unless Borquote.table_exists?
+      Borquote::Install.migrate :up
     end
-    add_index :borquotes, :num, :name => "num", :unique => true
   end
 
 end

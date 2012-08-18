@@ -1,5 +1,7 @@
+# coding: utf-8
+
 class DekeiCommand < FireBatCommand
-  
+
   def on_privmsg( cmd )
     if cmd.args(1,1)
       msg =
@@ -16,19 +18,19 @@ class DekeiCommand < FireBatCommand
     end
     @irc.privmsg cmd.reply, msg
   end
-  
+
   def full
     msg = "Найдено: [" +
     Dekei.find(:all,["items <> ''"], :order => "name").map(&:items).join(", ") +
     "]"
   end
-  
+
   def list
     msg = "Найдено: [" +
     Dekei.find(:all,["items <> ''"], :order => "name").map(&:name).join(", ") +
     "]"
   end
-  
+
   def info(name)
     name = "%#{name}%"
     if d = Dekei.find(:first, :conditions => ["name like ?",name])
@@ -37,7 +39,7 @@ class DekeiCommand < FireBatCommand
       "Не найдено (#{name})"
     end
   end
-  
+
   def add(name, items, nick)
     if d = Dekei.find_by_name(name)
       new = "#{d.items}, #{items}";
@@ -48,7 +50,7 @@ class DekeiCommand < FireBatCommand
       "#{d.name} добавлен в список"
     end
   end
-  
+
   def rm(name, item)
     if ((item !='') && (d = Dekei.find_by_name(name)))
       new = d.items
@@ -65,7 +67,7 @@ class DekeiCommand < FireBatCommand
       "Не найдено (#{name})"
     end
   end
-  
+
   def help( cmd )
     msg = "Модуль контроля дикеев для RMUD IRC Bot. Автор: Xeron. Синтаксис: !дикей action <params>.
 Actions:
@@ -78,11 +80,11 @@ Actions:
     reply cmd.nick, msg
     msg = ""
   end
-  
+
   def privmsg_filter( cmd )
     cmd.args(1,0) =~ /^!д[ие]кей/
   end
-  
+
   class Dekei < ActiveRecord::Base
   end
 
@@ -93,14 +95,14 @@ Actions:
         t.column :name, :string, :limit => 100
         t.column :items, :text
       end
+      add_index :dekeis, :name, :unique => true
     end
   end
 
-  def self.install    
-    unless Seen.table_exists?
-      Seen::Install.migrate :up
+  def self.install
+    unless Dekei.table_exists?
+      Dekei::Install.migrate :up
     end
-    add_index :dekeis, :name, :name => "name", :unique => true
   end
 
 end

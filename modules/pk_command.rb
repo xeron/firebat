@@ -1,27 +1,27 @@
+# coding: utf-8
+
 class PkCommand < FireBatCommand
   require_roles :oper
-    
-  def on_privmsg( cmd )
-    if cmd.args(1,1)
+
+  def on_privmsg(cmd)
+    if cmd.args(1, 1)
       msg =
-      case cmd.args(1,1)
-        when "+" then add( cmd.args(1,2), cmd.args_tail(1,3), cmd.nick )
-        when "-" then rm( cmd.args_tail(1,2) )
-        when "help" then help( cmd )
-        else info( cmd.args_tail(1,1) )
-      end
+        case cmd.args(1, 1)
+        when "+" then add(cmd.args(1, 2), cmd.args_tail(1, 3), cmd.nick)
+        when "-" then rm(cmd.args_tail(1, 2))
+        when "help" then help(cmd)
+        else info(cmd.args_tail(1, 1))
+        end
     else
       msg = list
     end
     @irc.privmsg cmd.reply, msg
   end
-  
+
   def list
-    msg = "Найдено: [" +
-    Pk.find(:all, :order => "name").map(&:name).join(", ") +
-    "]"
+    msg = "Найдено: [" + Pk.find(:all, :order => "name").collect(&:name).join(", ") + "]"
   end
-  
+
   def info(name)
     name = "%#{name}%"
     if p = Pk.find(:first, :conditions => ["name like ?", name])
@@ -33,14 +33,15 @@ class PkCommand < FireBatCommand
 
   def add(name, reason, nick)
     if p = Pk.find_by_name(name)
-      p = Pk.update(p.id, {:reason => reason})
+      p.reason = reason
+      p.save
       "Причина для #{p.name} обновлена"
     else
       p = Pk.create(:name => name, :reason => reason, :by => nick)
       "#{p.name} добавлен в список жертв!"
     end
   end
-  
+
   def rm(name)
     if p = Pk.find_by_name(name)
       p.destroy
@@ -49,8 +50,8 @@ class PkCommand < FireBatCommand
       "Не найдено (#{name})"
     end
   end
-  
-  def help( cmd )
+
+  def help(cmd)
     msg = "Модуль контроля пк-листа для RMUD IRC Bot. Автор: Xeron. Синтаксис: !пк action <params>.
 Actions:
 !пк => Показывает пк-лист
@@ -60,11 +61,11 @@ Actions:
     reply cmd.nick, msg
     msg = ""
   end
-  
-  def privmsg_filter( cmd )
-    cmd.args(1,0) == "!пк"
+
+  def privmsg_filter(cmd)
+    cmd.args(1, 0) == "!пк"
   end
-  
+
   class Pk < ActiveRecord::Base
   end
 
@@ -75,14 +76,14 @@ Actions:
         t.column :name, :string, :limit => 100
         t.column :reason, :text
       end
+      add_index :pks, :name, :unique => true
     end
   end
 
-  def self.install    
-    unless Seen.table_exists?
-      Seen::Install.migrate :up
+  def self.install
+    unless Pk.table_exists?
+      Pk::Install.migrate :up
     end
-    add_index :pks, :name, :name => "name", :unique => true
   end
 
 end

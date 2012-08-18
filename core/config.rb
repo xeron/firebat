@@ -1,1 +1,1 @@
-$config = File.open("config/firebat.config",'r') { |f| YAML.load(f) }
+$config = File.open("config/firebat.config.yml", 'r') { |f| YAML.load(f) }

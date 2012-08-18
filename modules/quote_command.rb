@@ -1,12 +1,14 @@
+# coding: utf-8
+
 class QuoteCommand < FireBatCommand
-  
-  def on_privmsg( cmd )
+
+  def on_privmsg(cmd)
     if ((@com == "aq") || (@com == "дц"))
       nums = Quote.count(:conditions => ["channel = ?", cmd.args(0)])
       q = Quote.create(:text => @arg, :by => cmd.nick, :time => Time.now, :channel => cmd.args(0))
       @irc.privmsg cmd.reply, "Цитата добавлена с номером: #{nums+1}"
     elsif @com == "dq"
-    if cmd.user.allowed?("oper") 
+    if cmd.user.allowed?("oper")
       n = @arg.to_i - 1
       if ((n >= 0) && (q = Quote.find(:first, :conditions => ["channel = ?", cmd.args(0)], :order => "id", :offset => n)))
         @irc.privmsg cmd.reply, "Цитата номер #{@arg} удалена"
@@ -27,13 +29,13 @@ class QuoteCommand < FireBatCommand
       end
     end
   end
-  
-  def privmsg_filter( cmd )
-    cmd.args(0) =~ /^#/ and cmd.args_tail(1,0) =~ /^!(aq|dq|q|ц|дц) (.*)$/
+
+  def privmsg_filter(cmd)
+    cmd.args(0) =~ /^#/ and cmd.args_tail(1, 0) =~ /^!(aq|dq|q|ц|дц) (.*)$/
     @com = $1
     @arg = $2
   end
-  
+
   class Quote < ActiveRecord::Base
   end
 
@@ -48,9 +50,9 @@ class QuoteCommand < FireBatCommand
     end
   end
 
-  def self.install    
-    unless Seen.table_exists?
-      Seen::Install.migrate :up
+  def self.install
+    unless Quote.table_exists?
+      Quote::Install.migrate :up
     end
   end
 

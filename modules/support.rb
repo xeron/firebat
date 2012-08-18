@@ -1,3 +1,5 @@
+# coding: utf-8
+
 #dummy
 class Support
   def initialize(irc)
@@ -11,7 +13,7 @@ class Time
     Time.at(time - self).getutc
   end
   def format_irc
-    if day > 1 #first is 1st Jan = 1 day
+    if day > 1 # first is 1st Jan = 1 day
       (self - 1.days).strftime("%dдн %Hчас %Mмин %Sсек")
     elsif hour > 0
       strftime("%Hчас %Mмин %Sсек")

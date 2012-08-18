@@ -1,64 +1,58 @@
 class RolesCommand < FireBatCommand
   require_roles :admin
-  
-  def on_privmsg( cmd )
+
+  def on_privmsg(cmd)
     msg=
-    case cmd.args(1,1)
+    case cmd.args(1, 1)
       when "list" then list
-      when "rm" then remove( cmd.args(1,2) )
-      when "info" then info( cmd.args(1,2) )
-      when "add" then add( cmd.args(1,2) )
+      when "rm" then remove(cmd.args(1, 2))
+      when "info" then info(cmd.args(1, 2))
+      when "add" then add(cmd.args(1, 2))
       when "help" then help
-      else "use !roles help for full help" 
+      else "use !roles help for full help"
     end
-    reply cmd.nick, msg 
+    reply cmd.nick, msg
   end
-  
+
   def list
-    msg = "["
-    Role.find(:all).each do |u|
-      msg += u.name + ", "
-    end
-    msg.chop!
-    msg.chop!
-    msg += "]" 
+    "[" + Role.all.collect(&:name).join(", ") + "]"
   end
-  
+
   def remove(name)
-    if u = Role.find_by_name(name)
-      u.destroy
-      "Role deleted"
+    if r = Role.find_by_name(name)
+      r.destroy
+      "Role #{r.name} deleted"
     else
-      "Role not found"
+      "Role #{name} not found"
     end
   end
-  
+
   def info(name)
-    if u = Role.find_by_name(name)
-      "Role #{u.name} ##{u.id}"
+    if r = Role.find_by_name(name)
+      "Role #{r.name}, ##{r.id}, users: [" + r.users.collect(&:name).join(", ") + "]"
     else
-      "Role not found"
+      "Role #{name} not found"
     end
   end
-  
+
   def add(name)
-    if u = Role.find_by_name(name)
-      "Role already exists"
+    if r = Role.find_by_name(name)
+      "Role #{name} already exists"
     else
-      Role.create(:name => name)
-      "Role added"
+      r = Role.create(:name => name)
+      "Role #{r.name} added, ##{r.id}"
     end
   end
-  
+
   def help
-"Roles controller module for FireBat5. Written by ru. Roles uses for split access for different commands to different users. Syntaxis: !roles action <params>. Action:
-    !roles list => Displays all roles
-    !roles rm name => Deletes role with name = name
+"Roles controller module for FireBat5. Syntax: !roles action <params>. Actions:
+    !roles list => Display all roles
+    !roles rm name => Delete role with given name
     !roles info name => Show full info about role
     !roles add name => Add role"
   end
-  
-  def privmsg_filter( cmd )
-    cmd.args(1,0) == "!roles"
+
+  def privmsg_filter(cmd)
+    cmd.args(1, 0) == "!roles"
   end
 end
