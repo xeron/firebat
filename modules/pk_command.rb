@@ -5,13 +5,12 @@ class PkCommand < FireBatCommand
 
   def on_privmsg(cmd)
     if cmd.args(1, 1)
-      msg =
-        case cmd.args(1, 1)
-        when "+" then add(cmd.args(1, 2), cmd.args_tail(1, 3), cmd.nick)
-        when "-" then rm(cmd.args_tail(1, 2))
-        when "help" then help(cmd)
-        else info(cmd.args_tail(1, 1))
-        end
+      msg = case cmd.args(1, 1)
+      when "+" then add(cmd.args(1, 2), cmd.args_tail(1, 3), cmd.nick)
+      when "-" then rm(cmd.args_tail(1, 2))
+      when "help" then help(cmd)
+      else info(cmd.args_tail(1, 1))
+      end
     else
       msg = list
     end

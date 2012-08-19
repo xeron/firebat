@@ -2,16 +2,15 @@
 
 class DekeiCommand < FireBatCommand
 
-  def on_privmsg( cmd )
-    if cmd.args(1,1)
-      msg =
-      case cmd.args(1,1)
-        when "все" then full
-        when "list" then list
-        when "+" then add( cmd.args(1,2), cmd.args_tail(1,3), cmd.nick )
-        when "-" then rm( cmd.args(1,2), cmd.args_tail(1,3) )
-        when "help" then help( cmd )
-        else info( cmd.args_tail(1,1) )
+  def on_privmsg(cmd)
+    if cmd.args(1, 1)
+      msg = case cmd.args(1, 1)
+      when "все" then full
+      when "list" then list
+      when "+" then add(cmd.args(1, 2), cmd.args_tail(1, 3), cmd.nick)
+      when "-" then rm(cmd.args(1, 2), cmd.args_tail(1, 3))
+      when "help" then help(cmd)
+      else info(cmd.args_tail(1, 1))
       end
     else
       msg = list
@@ -20,20 +19,16 @@ class DekeiCommand < FireBatCommand
   end
 
   def full
-    msg = "Найдено: [" +
-    Dekei.find(:all,["items <> ''"], :order => "name").map(&:items).join(", ") +
-    "]"
+    "Найдено: [" + Dekei.find(:all, ["items <> ''"], :order => "name").collect(&:items).join(", ") + "]"
   end
 
   def list
-    msg = "Найдено: [" +
-    Dekei.find(:all,["items <> ''"], :order => "name").map(&:name).join(", ") +
-    "]"
+    "Найдено: [" + Dekei.find(:all, ["items <> ''"], :order => "name").collect(&:name).join(", ") + "]"
   end
 
   def info(name)
     name = "%#{name}%"
-    if d = Dekei.find(:first, :conditions => ["name like ?",name])
+    if d = Dekei.find(:first, :conditions => ["name like ?", name])
       "Найдено: #{d.name}. Добавил: #{d.by}\nВещи: #{d.items}"
     else
       "Не найдено (#{name})"
@@ -42,9 +37,14 @@ class DekeiCommand < FireBatCommand
 
   def add(name, items, nick)
     if d = Dekei.find_by_name(name)
-      new = "#{d.items}, #{items}";
-      d = Dekei.update(d.id, {:items => new})
-      "Список для #{d.name} обновлен"
+      unless items.empty?
+        d.items = "#{d.items}, #{items}"
+        d.items = items_cleanup(d.items)
+        d.save
+        "Список для #{d.name} обновлен"
+      else
+        "Напишите, что добавить в список #{d.name}"
+      end
     else
       d = Dekei.create(:name => name, :items => items, :by => nick)
       "#{d.name} добавлен в список"
@@ -52,23 +52,30 @@ class DekeiCommand < FireBatCommand
   end
 
   def rm(name, item)
-    if ((item !='') && (d = Dekei.find_by_name(name)))
-      new = d.items
-      if new.gsub!(", #{item}","")
-        d = Dekei.update(d.id, {:items => new})
-        "#{item} удален из списка дикеев #{name}"
+    if d = Dekei.find_by_name(name)
+      unless item.empty?
+        if d.items.include?(item)
+          d.items = d.items.gsub(item, "")
+          d.items = items_cleanup(d.items)
+          d.save
+          "#{item} удален из списка дикеев #{name}"
+        else
+          "В списке для #{name} '#{item}' нет"
+        end
       else
-        "В списке для #{name} '#{item}' нет"
+        d.destroy
+        "#{name} удален из списка"
       end
-    elsif d = Dekei.find_by_name(name)
-      d.destroy
-      "#{name} удален из списка"
     else
       "Не найдено (#{name})"
     end
   end
 
-  def help( cmd )
+  def items_cleanup(items)
+    items.gsub(", ,", ",").gsub(/^, /, "").gsub(/, $/, "")
+  end
+
+  def help(cmd)
     msg = "Модуль контроля дикеев для RMUD IRC Bot. Автор: Xeron. Синтаксис: !дикей action <params>.
 Actions:
 !дикей => Показывает список персонажей, у которых есть дикеи
@@ -81,8 +88,8 @@ Actions:
     msg = ""
   end
 
-  def privmsg_filter( cmd )
-    cmd.args(1,0) =~ /^!д[ие]кей/
+  def privmsg_filter(cmd)
+    cmd.args(1, 0) =~ /^!д[ие]кей/
   end
 
   class Dekei < ActiveRecord::Base

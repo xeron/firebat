@@ -2,14 +2,13 @@ class RolesCommand < FireBatCommand
   require_roles :admin
 
   def on_privmsg(cmd)
-    msg=
-    case cmd.args(1, 1)
-      when "list" then list
-      when "rm" then remove(cmd.args(1, 2))
-      when "info" then info(cmd.args(1, 2))
-      when "add" then add(cmd.args(1, 2))
-      when "help" then help
-      else "use !roles help for full help"
+    msg = case cmd.args(1, 1)
+    when "list" then list
+    when "rm" then remove(cmd.args(1, 2))
+    when "info" then info(cmd.args(1, 2))
+    when "add" then add(cmd.args(1, 2))
+    when "help" then help
+    else "use !roles help for full help"
     end
     reply cmd.nick, msg
   end

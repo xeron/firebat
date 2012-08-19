@@ -49,15 +49,15 @@ class SeenCommand < FireBatCommand
         msg += "#{n}) "
         # time = "#{s.time.strftime("%H:%M (%d.%m.%Y)")}"
         time = Time.at(Time.now-s.time).getutc.format_irc
-        case s.code
+        msg += case s.code
         when 'join'
-          msg += "#{s.nick} (#{s.ident}@#{s.host}) зашел на канал #{s.param1} #{time} назад.\n"
+          "#{s.nick} (#{s.ident}@#{s.host}) зашел на канал #{s.param1} #{time} назад.\n"
         when 'part'
-          msg += "#{s.nick} (#{s.ident}@#{s.host}) покинул канал #{s.param1} (#{s.param2}) #{time} назад.\n"
+          "#{s.nick} (#{s.ident}@#{s.host}) покинул канал #{s.param1} (#{s.param2}) #{time} назад.\n"
         when 'quit'
-          msg += "#{s.nick} (#{s.ident}@#{s.host}) покинул IRC (#{s.param1}) #{time} назад.\n"
+          "#{s.nick} (#{s.ident}@#{s.host}) покинул IRC (#{s.param1}) #{time} назад.\n"
         else
-          msg += "#{s.nick} (#{s.ident}@#{s.host}) сменил ник на #{s.param1} #{time} назад.\n"
+          "#{s.nick} (#{s.ident}@#{s.host}) сменил ник на #{s.param1} #{time} назад.\n"
         end
         n += 1
       end
@@ -93,15 +93,15 @@ class SeenCommand < FireBatCommand
             # just for debugging
             # reply cmd.nick, "I found event #{seen.code} signed at #{seen.time} params | #{seen.param1}, #{seen.param2} | #{nicks_chain}"
             time = Time.at(Time.now-seen.time).getutc.format_irc
-            case seen.code
+            msg = case seen.code
             when 'join'
-              msg = "#{seen.nick} (#{seen.ident}@#{seen.host}) зашел на канал #{seen.param1} #{time} назад."
+              "#{seen.nick} (#{seen.ident}@#{seen.host}) зашел на канал #{seen.param1} #{time} назад."
             when 'part'
-              msg = "#{seen.nick} (#{seen.ident}@#{seen.host}) покинул канал #{seen.param1} (#{seen.param2}) #{time} назад."
+              "#{seen.nick} (#{seen.ident}@#{seen.host}) покинул канал #{seen.param1} (#{seen.param2}) #{time} назад."
             when 'quit'
-              msg = "#{seen.nick} (#{seen.ident}@#{seen.host}) покинул IRC (#{seen.param1}) #{time} назад."
+              "#{seen.nick} (#{seen.ident}@#{seen.host}) покинул IRC (#{seen.param1}) #{time} назад."
             else
-              msg = "#{seen.nick} (#{seen.ident}@#{seen.host}) сменил ник на #{seen.param1} #{time} назад [#{nicks_chain}]."
+              "#{seen.nick} (#{seen.ident}@#{seen.host}) сменил ник на #{seen.param1} #{time} назад [#{nicks_chain}]."
             end
             reply cmd.nick, msg
           else
