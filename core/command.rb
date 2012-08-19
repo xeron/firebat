@@ -8,11 +8,11 @@ module FireBat
     def initialize(text)
       @src = text.chomp
       # parsing raw command to prefix, command name and params
-      if text=~/^(:(\S+) +)?(\S+) (.*?)[\r\n]?$/u
+      if text =~ /^(:(\S+) +)?(\S+) (.*?)[\r\n]?$/u
         prefix, @cmd, pars = $2, $3, $4
         @params = []
         # parse prefix for nick ident and host
-        if prefix=~/(\S+)!(\S+)@(\S+)/u
+        if prefix =~ /(\S+)!(\S+)@(\S+)/u
           @nick, @ident, @host = $1, $2, $3
         end
         # parse params to array of its
