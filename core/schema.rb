@@ -2,7 +2,7 @@ module FireBat
   class Install < ActiveRecord::Migration
 
     def self.up
-      table_up User, :users, do |t|
+      table_up User, :users do |t|
         t.column :name, :string
         t.column :password, :string
         t.column :registered_at, :datetime
