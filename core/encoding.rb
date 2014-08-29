@@ -1,47 +1,47 @@
 module FireBat
   class Encoding
 
+    attr_reader :script, :server, :terminal
+
     def initialize(irc_charset)
-      @server = server = irc_charset
+      @server = irc_charset
       locale = `locale | grep LANG`
       locale.gsub!(/["']/, '')
       locale =~ /\.(.*)$/
-      terminal = $1
-      script = 'utf-8'
+      @terminal = $1
+      @script = 'utf-8'
 
       @f_server = @t_server = @f_std = @t_std = nil
       if script != server
-        @f_server = Iconv.new(script, server)
-        @t_server = Iconv.new(server, script)
+        @t_server = @f_server = true
       end
       if script != terminal
-        @f_std = Iconv.new(script, terminal)
-        @t_std = Iconv.new(terminal, script)
+        @t_std = @f_std = true
       end
     end
 
     def t_s(str)
       begin
-        @t_server ? @t_server.iconv(str) : str.force_encoding(@server)
+        @t_server ? str.encode!(server, script) : str.force_encoding(server)
       rescue => ex
-        puts "iconv failed in t_s"
+        puts "encode failed in t_s"
       end
     end
 
     def f_s(str)
       begin
-        @f_server ? @f_server.iconv(str) : str.force_encoding(@server)
+        @f_server ? str.encode!(script, server) : str.force_encoding(@server)
       rescue => ex
-        puts "iconv failed in f_s"
+        puts "encode failed in f_s"
       end
     end
 
     def t_t(str)
-      @t_std ? @t_std.iconv(str) : str.force_encoding(@server)
+      @t_std ? str.encode!(terminal, script) : str.force_encoding(@server)
     end
 
     def f_t(str)
-      @f_std ? @f_std.iconv(str) : str.force_encoding(@server)
+      @f_std ? str.encode!(script, terminal) : str.force_encoding(@server)
     end
 
   end

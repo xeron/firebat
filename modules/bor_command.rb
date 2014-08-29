@@ -9,7 +9,7 @@ class BorCommand < FireBatCommand
     else
       kol = 0
       hash = BashOrgRu.get(n)
-      nums_exists = Borquote.find(:all, :select => "num", :conditions => ["num in (?)",hash.keys]).map {|q| q.num}
+      nums_exists = Borquote.where(num: hash.keys).pluck(:num)
       hash.reject!{|k,v| nums_exists.include? k}
       hash.each {|key, value|
           q = Borquote.create(:num => key, :text => value.gsub("\n","").gsub("\r","").gsub("<br>","\n").gsub("&lt;","<").gsub("&gt;",">").gsub("\t","").gsub("&quot;","\"").gsub("<br />","\n").gsub("&amp;","&"))
@@ -30,10 +30,10 @@ class BorCommand < FireBatCommand
 
   class BashOrgRu
     def self.get(quote_id)
-      data = open("http://bash.org.ru/quote/#{quote_id}").read
-      data = Iconv.new('utf8', 'cp1251').iconv(data)
+      data = open("http://bash.im/quote/#{quote_id}").read
+      data.encode!("utf-8", "cp1251")
       hash = {}
-      data.scan(/>(\d+)<\/a>(.*?)<div>(.*?)<\/div>/m).each {|key, trash, value| hash[key.to_i] = value}
+      data.scan(/<a href="\/quote.*?class="id">#(\d+).*?<div class="text">(.*?)<\/div>/m).each {|key, value| hash[key.to_i] = value}
       return hash
     end
   end

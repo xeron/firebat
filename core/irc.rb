@@ -6,7 +6,6 @@ require 'pp'
 require 'yaml'
 require 'open-uri'
 require 'uri'
-require 'iconv'
 
 require 'core/config'
 require 'core/command'
