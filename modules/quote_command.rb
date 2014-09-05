@@ -32,9 +32,9 @@ class QuoteCommand < FireBatCommand
   end
 
   def privmsg_filter(cmd)
-    cmd.args(0) =~ /^#/ and cmd.args_tail(1, 0) =~ /^!(aq|dq|q|ц|дц) (.*)$/
-    @com = $1
-    @arg = $2
+    if (cmd.args(0) =~ /^#/) && (cmd.args_tail(1, 0) =~ /^!(aq|dq|q|ц|дц) (.*)$/)
+      @com, @arg = $1, $2
+    end
   end
 
   class Quote < ActiveRecord::Base

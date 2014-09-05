@@ -35,8 +35,7 @@ class RmudAdditemCommand < FireBatCommand
 
   def privmsg_filter(cmd)
     if cmd.args_tail(1, 0) =~ /^(Название:|Тип:|Свойства:|Ограничения:|Влияния:|Эффекты:|Содержит заклинание:|Заряды:|Сила удара:|Тип:|Качество брони:|Содержит:|С:) (.*)$/
-      @prop = $1
-      @val = $2
+      @prop, @val = $1, $2
     end
   end
 

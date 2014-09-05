@@ -38,7 +38,8 @@ class ModeCommand < FireBatCommand
   end
 
   def privmsg_filter(cmd)
-    cmd.args(1,0) =~ /^!(op|hop|voi|deop|dehop|devoi|ban|unban|kick)/
-    @com = $1
+    if cmd.args(1,0) =~ /^!(op|hop|voi|deop|dehop|devoi|ban|unban|kick)/
+      @com = $1
+    end
   end
 end
