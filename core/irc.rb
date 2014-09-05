@@ -5,7 +5,6 @@ require 'socket'
 require 'pp'
 require 'yaml'
 require 'open-uri'
-require 'uri'
 
 require 'core/config'
 require 'core/command'
@@ -43,9 +42,9 @@ module FireBat
     def connect(server = nil, port = nil)
       @server = server || @server
       @port = port || @port
-      @sock = TCPSocket.new(@server , @port)
+      @sock = TCPSocket.new(@server, @port)
 
-      puts "creating events"
+      puts "Creating events..."
       @events = Events.new
 
       @reader = Thread.new(self) do |bot|
@@ -66,15 +65,15 @@ module FireBat
     #     irc.send :quit, "blabla"
     #
     def send(command, *args)
-      args = args[0] if args[0].class == Array
+      args = args[0] if args[0].is_a?(Array)
       if args.length > 0
         args[-1] = ":" + args[-1].to_s
-        buf = command.to_s + " " + args.map { |e| e.to_s }.join(" ")
+        buf = command.to_s + " " + args.map(&:to_s).join(" ")
       else
         buf = command.to_s
       end
-      @sock.puts(@encoder.t_s(buf))
-      puts "=>" + @encoder.t_t(buf)
+      sock.puts(encoder.t_s(buf))
+      puts "=>" + encoder.t_t(buf)
     end
 
     # Send raw message when it missing
@@ -99,6 +98,7 @@ module FireBat
     end
 
     # Smart privmsg. Can send multiline messages
+    #
     def privmsg(to, str)
       return unless str
       str.split(/\n/).each do |s|
@@ -117,14 +117,14 @@ module FireBat
     # then, casing type, run event parser
     #
     def __on_data(text)
-      if @develop
-        puts @develop
+      if develop
+        puts develop
         rehash
       end
-      text = @encoder.f_s text
+      text = encoder.f_s(text)
       cmd = Command.new text
-      # puts "<=" + @encoder.t_t(text)
-      @events.parse(cmd)
+      # puts "<=" + encoder.t_t(text)
+      events.parse(cmd)
     end
 
     def wait!
@@ -133,8 +133,8 @@ module FireBat
 
     # Reload all commands
     def rehash
-      @events.empty!
-      @@metadata = File.open("config/metadata.yml") { |f| YAML.load(f) }
+      events.empty!
+      @@metadata = YAML.load_file("config/metadata.yml")
       Dir.foreach("modules") do |file|
         if file =~ /^(.+)\.rb$/
           mod = $1
@@ -150,7 +150,7 @@ module FireBat
 
     # Return service object with that name
     def service(classname)
-      @events.events.values.flatten.find do |command|
+      events.events.values.flatten.find do |command|
         command.class == classname
       end
     end
@@ -159,7 +159,7 @@ module FireBat
 end
 
 if __FILE__ == $0
-  i = IRC.new :nick => "qu" , :ident => 'z' , :username  => 'qq'
-  i.connect 'ameno.idz.ru' , 6667
-  i.send :join , '#mark'
+  i = IRC.new :nick => "qu", :ident => 'z', :username => 'qq'
+  i.connect 'ameno.idz.ru', 6667
+  i.send :join, '#mark'
 end

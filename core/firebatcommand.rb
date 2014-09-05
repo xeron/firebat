@@ -45,10 +45,7 @@ module FireBat
       def require_roles(*args)
         @roles = args
       end
-      def require_role(*args)
-        @roles = args
-      end
-      def reply_style( s )
+      def reply_style(s)
         @reply = s
       end
       def reply

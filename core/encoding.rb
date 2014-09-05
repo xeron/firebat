@@ -5,43 +5,36 @@ module FireBat
 
     def initialize(irc_charset)
       @server = irc_charset
-      locale = `locale | grep LANG`
-      locale.gsub!(/["']/, '')
-      locale =~ /\.(.*)$/
-      @terminal = $1
+      ENV["LANG"].match(/\.(.*)$/)
+      @terminal = $1.downcase
       @script = 'utf-8'
 
-      @f_server = @t_server = @f_std = @t_std = nil
-      if script != server
-        @t_server = @f_server = true
-      end
-      if script != terminal
-        @t_std = @f_std = true
-      end
+      @t_server = @f_server = (script == server) ? false : true
+      @t_std = @f_std = (script == terminal) ? false : true
     end
 
     def t_s(str)
       begin
         @t_server ? str.encode!(server, script) : str.force_encoding(server)
       rescue => ex
-        puts "encode failed in t_s"
+        puts "Encode failed from bot to server."
       end
     end
 
     def f_s(str)
       begin
-        @f_server ? str.encode!(script, server) : str.force_encoding(@server)
+        @f_server ? str.encode!(script, server) : str.force_encoding(server)
       rescue => ex
-        puts "encode failed in f_s"
+        puts "Encode failed from server to bot."
       end
     end
 
     def t_t(str)
-      @t_std ? str.encode!(terminal, script) : str.force_encoding(@server)
+      @t_std ? str.encode!(terminal, script) : str.force_encoding(server)
     end
 
     def f_t(str)
-      @f_std ? str.encode!(script, terminal) : str.force_encoding(@server)
+      @f_std ? str.encode!(script, terminal) : str.force_encoding(server)
     end
 
   end

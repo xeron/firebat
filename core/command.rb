@@ -3,7 +3,7 @@
 module FireBat
   class Command
 
-    attr_reader :params , :nick , :ident , :host , :cmd, :src
+    attr_reader :params, :nick, :ident, :host, :cmd, :src
 
     def initialize(text)
       @src = text.chomp
@@ -16,26 +16,22 @@ module FireBat
           @nick, @ident, @host = $1, $2, $3
         end
         # parse params to array of its
-        if pars=~/^(?:(.*?) )?:(.*)$/u # this test works only if last parameter have : prefix
+        if pars =~ /^(?:(.*?) )?:(.*)$/u # this test works only if last parameter have : prefix
           p1, p2 = $1, $2
-          if p1
-            @params = (p1.split " ") + [p2]
-          else
-            @params = [p2]
-          end
+          @params = p1 ? (p1.split " ") + [p2] : [p2]
         else
-          # pars cannot be parsed in that way. maybe it is last parameter?
+          # pars cannot be parsed in that way. Maybe it is last parameter?
           @params = pars.split " "
         end
       end
     end
 
     def code
-      if @cmd
+      if cmd
         if IRC.metadata
-          ext = IRC.metadata[:command_codes][@cmd]
+          ext = IRC.metadata[:command_codes][cmd]
         end
-        ext || @cmd.downcase
+        ext || cmd.downcase
       else
         "command not found"
       end
@@ -43,21 +39,21 @@ module FireBat
 
     def args(i, j = nil)
       if j
-        @params[i].split(" ")[j]
+        params[i].split(" ")[j]
       else
-        @params[i]
+        params[i]
       end
     end
 
     def args_tail(i, j)
-      @params[i].split(" ", j + 1)[j].to_s
+      params[i].split(" ", j + 1)[j].to_s
     end
 
     def reply
-      if @params[0] =~ /^#/
-        @params[0]
+      if params[0] =~ /^#/
+        params[0]
       else
-        @nick
+        nick
       end
     end
 
@@ -65,7 +61,7 @@ module FireBat
       if @user
         @user
       else
-        @user = User.find_by_name(@nick)
+        @user = User.find_by_name(nick)
       end
     end
 
