@@ -18,7 +18,7 @@ require 'core/encoding'
 module FireBat
   class IRC
 
-    attr_reader :options, :sock, :events, :config, :encoder
+    attr_reader :sock, :events, :config, :encoder
     attr_accessor :develop
     cattr_accessor :metadata
 
