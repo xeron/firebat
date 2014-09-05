@@ -42,7 +42,7 @@ class SowItemCommand < FireBatCommand
     end
     text.gsub!(".", "%")
     text = "%#{text}%"
-    nums = SowItem.count(:conditions => ["#{field} like ?", text])
+    nums = SowItem.where("#{field} like ?", text).count
     if n < 0
       if ((niz < 0) || (ver < niz) || (niz > nums))
         niz = 0
@@ -54,12 +54,12 @@ class SowItemCommand < FireBatCommand
       kol = ver - niz
       msg = "Найдено: #{nums} "
       msg += "[#{niz+1}-#{ver}] " if nums > 0
-      SowItem.find(:all, :conditions => ["#{field} like ?",text], :limit => kol, :offset => niz).each do |i|
+      SowItem.where("#{field} like ?", text).limit(kol).offset(niz).each do |i|
         msg += "[#{i.name}]"
       end
       @irc.privmsg cmd.reply, msg
     else
-      if i = SowItem.find(:first, :conditions => ["#{field} like ?",text], :offset => n)
+      if i = SowItem.where("#{field} like ?", text).offset(n).first
         keys1 = [
           "Требует для использования",
           "Флаги предмета",

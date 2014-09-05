@@ -3,28 +3,28 @@
 class BorCommand < FireBatCommand
 
   def on_privmsg(cmd)
-    n = cmd.args(1,1)
+    n = cmd.args(1, 1)
     if q = Borquote.find_by_num(n)
       msg = q.text
     else
-      kol = 0
+      count = 0
       hash = BashOrgRu.get(n)
-      nums_exists = Borquote.where(num: hash.keys).pluck(:num)
-      hash.reject!{|k,v| nums_exists.include? k}
-      hash.each {|key, value|
-          q = Borquote.create(:num => key, :text => value.gsub("\n","").gsub("\r","").gsub("<br>","\n").gsub("&lt;","<").gsub("&gt;",">").gsub("\t","").gsub("&quot;","\"").gsub("<br />","\n").gsub("&amp;","&"))
-          kol += 1
-      }
-      if kol == 1
+      nums_exist = Borquote.where(num: hash.keys).pluck(:num)
+      hash.reject! {|id, quote| nums_exist.include?(id)}
+      hash.each do |id, quote|
+        q = Borquote.create(:num => id, :text => quote.gsub("\n","").gsub("\r","").gsub("<br>","\n").gsub("&lt;","<").gsub("&gt;",">").gsub("\t","").gsub("&quot;","\"").gsub("<br />","\n").gsub("&amp;","&"))
+        count += 1
+      end
+      if count == 1
         msg = q.text
       else
-        msg = "А нет такой цитаты"
+        msg = "А нет такой цитаты."
       end
     end
     @irc.privmsg cmd.reply, msg
   end
 
-  def privmsg_filter( cmd )
+  def privmsg_filter(cmd)
     cmd.args(1) =~ /^!bor (\d+)$/
   end
 

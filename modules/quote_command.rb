@@ -3,31 +3,32 @@
 class QuoteCommand < FireBatCommand
 
   def on_privmsg(cmd)
-    if ((@com == "aq") || (@com == "дц"))
-      nums = Quote.count(:conditions => ["channel = ?", cmd.args(0)])
+    count = Quote.count(:channel => cmd.args(0))
+    n = @arg.to_i - 1
+
+    case @com
+    when "aq" || "дц"
       q = Quote.create(:text => @arg, :by => cmd.nick, :time => Time.now, :channel => cmd.args(0))
-      @irc.privmsg cmd.reply, "Цитата добавлена с номером: #{nums+1}"
-    elsif @com == "dq"
-    if cmd.user.allowed?("oper")
-      n = @arg.to_i - 1
-      if ((n >= 0) && (q = Quote.find(:first, :conditions => ["channel = ?", cmd.args(0)], :order => "id", :offset => n)))
-        @irc.privmsg cmd.reply, "Цитата номер #{@arg} удалена"
-        q.destroy
+      msg = "Цитата добавлена с номером: #{count + 1}"
+    when "dq"
+      if cmd.user.allowed?("oper")
+        if (n >= 0) && (q = Quote.where(:channel => cmd.args(0)).order(:id).offset(n).first)
+          q.destroy
+          msg = "Цитата номер #{@arg} удалена"
+        else
+          msg = "Нет цитаты с таким номером"
+        end
       else
-        @irc.privmsg cmd.reply, "Нет цитаты с таким номером"
+        msg = "У вас нет прав на использование этой команды"
       end
     else
-      @irc.privmsg cmd.reply, "У вас нет прав на использование этой команды"
-    end
-    else
-      nums = Quote.count(:conditions => ["channel = ?", cmd.args(0)])
-      n = @arg.to_i - 1
-      if ((n >= 0) && (q = Quote.find(:first, :conditions => ["channel = ?", cmd.args(0)], :order => "id", :offset => n)))
-        @irc.privmsg cmd.reply, "(#{n+1}/#{nums}) #{q.text} || Добавил: #{q.by} [#{q.time.strftime("%d.%m.%Y (%H:%M)")}]"
+      if (n >= 0) && (q = Quote.where(:channel => cmd.args(0)).order(:id).offset(n).first)
+        msg = "(#{n + 1}/#{count}) #{q.text} || Добавил: #{q.by} [#{q.time.strftime("%d.%m.%Y (%H:%M)")}]"
       else
-        @irc.privmsg cmd.reply, "Нет цитаты с таким номером"
+        msg = "Нет цитаты с таким номером"
       end
     end
+    @irc.privmsg cmd.reply, msg
   end
 
   def privmsg_filter(cmd)
