@@ -74,7 +74,7 @@ module FireBat
         command = command.to_s
         command += " " + args.map(&:to_s).join(" ") if args.any?
         command += " :"
-        maxlength = 510 - command.bytesize - 40 # 40 for bot mask
+        maxlength = 510 - command.bytesize - 60 # 60 for bot mask
 
         msg = ""
         body.chars.each do |ch|
