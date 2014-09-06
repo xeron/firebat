@@ -66,14 +66,33 @@ module FireBat
     #
     def send(command, *args)
       args = args[0] if args[0].is_a?(Array)
+      buf = []
+
       if args.length > 0
-        args[-1] = ":" + args[-1].to_s
-        buf = command.to_s + " " + args.map(&:to_s).join(" ")
+        body = args[-1].to_s
+        args.delete_at(-1)
+        command = command.to_s
+        command += " " + args.map(&:to_s).join(" ") if args.any?
+        command += " :"
+        maxlength = 510 - command.bytesize - 40 # 40 for bot mask
+
+        msg = ""
+        body.chars.each do |ch|
+          msg += ch
+          if msg.bytesize >= maxlength
+            buf << command + msg
+            msg = ""
+          end
+        end
+        buf << command + msg
       else
-        buf = command.to_s
+        buf << command.to_s
       end
-      sock.puts(encoder.t_s(buf))
-      puts "=>" + encoder.t_t(buf)
+
+      buf.each do |b|
+        sock.puts(encoder.t_s(b))
+        puts "=>" + encoder.t_t(b)
+      end
     end
 
     # Send raw message when it missing

@@ -9,7 +9,7 @@ class Develop < FireBatCommand
       @irc.develop = false
       msg = "off"
     end
-    reply cmd.nick, "developer mode #{msg}"
+    reply cmd.nick, "developer mode is #{msg}"
   end
 
   def privmsg_filter(cmd)

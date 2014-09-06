@@ -15,6 +15,6 @@ class EventDump < FireBatCommand
   end
 
   def privmsg_filter(cmd)
-    cmd.args(1,0) == "!events"
+    cmd.args(1, 0) == "!events"
   end
 end
