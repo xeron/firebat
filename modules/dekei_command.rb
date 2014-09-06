@@ -72,10 +72,6 @@ class DekeiCommand < FireBatCommand
     end
   end
 
-  def items_cleanup(items)
-    items.gsub(", ,", ",").gsub(/^, /, "").gsub(/, $/, "")
-  end
-
   def help(cmd)
     msg = "Модуль контроля дикеев для RMUD IRC Bot. Автор: Xeron. Синтаксис: !дикей action <params>.
 Actions:
