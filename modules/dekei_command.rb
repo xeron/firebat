@@ -19,29 +19,29 @@ class DekeiCommand < FireBatCommand
   end
 
   def full
-    "Найдено: [" + Dekei.find(:all, ["items <> ''"], :order => "name").collect(&:items).join(", ") + "]"
+    "Найдено: [" + Dekei.all.order(:name).pluck(:items).join(", ") + "]"
   end
 
   def list
-    "Найдено: [" + Dekei.find(:all, ["items <> ''"], :order => "name").collect(&:name).join(", ") + "]"
+    "Найдено: [" + Dekei.all.order(:name).pluck(:name).join(", ") + "]"
   end
 
   def info(name)
-    name = "%#{name}%"
-    if d = Dekei.find(:first, :conditions => ["name like ?", name])
-      "Найдено: #{d.name}. Добавил: #{d.by}\nВещи: #{d.items}"
+    if d = Dekei.where("name like ?", "%#{name}%").first
+      "Найдено: #{d.name}. Добавил: #{d.by}\nВещи: #{d.items.join(", ")}"
     else
-      "Не найдено (#{name})"
+      "Не найдено имен, содержащих '#{name}'"
     end
   end
 
   def add(name, items, nick)
+    items = items.split(/\s*,\s*/)
+
     if d = Dekei.find_by_name(name)
-      unless items.empty?
-        d.items = "#{d.items}, #{items}"
-        d.items = items_cleanup(d.items)
+      if items.any?
+        d.items += items
         d.save
-        "Список для #{d.name} обновлен"
+        "В список для #{d.name} добавлено: [#{items.join(", ")}]"
       else
         "Напишите, что добавить в список #{d.name}"
       end
@@ -51,16 +51,17 @@ class DekeiCommand < FireBatCommand
     end
   end
 
-  def rm(name, item)
+  def rm(name, items)
+    items = items.split(/\s*,\s*/)
+
     if d = Dekei.find_by_name(name)
-      unless item.empty?
-        if d.items.include?(item)
-          d.items = d.items.gsub(item, "")
-          d.items = items_cleanup(d.items)
+      if items.any?
+        if (items - d.items).empty?
+          d.items -= items
           d.save
-          "#{item} удален из списка дикеев #{name}"
+          "Удалено из списка дикеев #{d.name}: [#{items.join(", ")}]"
         else
-          "В списке для #{name} '#{item}' нет"
+          "В списке для #{d.name} нет [#{items.join(", ")}]"
         end
       else
         d.destroy
@@ -85,7 +86,7 @@ Actions:
 !дикей - <имя> => Удаляет из списка персонажа
 !дикей - <имя> <вещи> => Удаляет из списка дикеев персонажа <вещи>"
     reply cmd.nick, msg
-    msg = ""
+    false
   end
 
   def privmsg_filter(cmd)
@@ -98,9 +99,9 @@ Actions:
   class Dekei::Install < ActiveRecord::Migration
     def self.up
       create_table :dekeis do |t|
-        t.column :by, :string, :limit => 30
-        t.column :name, :string, :limit => 100
-        t.column :items, :text
+        t.string :by, :limit => 30
+        t.string :name, :limit => 100
+        t.string :items, :limit => 30, array: true, default: []
       end
       add_index :dekeis, :name, :unique => true
     end

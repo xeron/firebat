@@ -61,13 +61,13 @@ namespace :db do
   task :dump do
     load_modules
 
-    establish_connection (
+    establish_connection ({
       :adapter  => "mysql2",
       :host     => "localhost",
       :username => "root",
       :password => "",
       :database => "rmudbot"
-    )
+    })
 
     [ RmudItemCommand::RmudItem,
       SowAdditemCommand::SowItem,
