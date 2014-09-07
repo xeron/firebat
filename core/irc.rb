@@ -92,6 +92,7 @@ module FireBat
       buf.each do |b|
         sock.puts(encoder.t_s(b))
         puts "=>" + encoder.t_t(b)
+        sleep 0.5
       end
     end
 
