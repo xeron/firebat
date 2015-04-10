@@ -40,7 +40,7 @@ class RmudItemCommand < FireBatCommand
     end
     text.gsub!(".", "%")
     text = "%#{text}%"
-    nums = RmudItem.count(:conditions => ["#{field} like ?", text])
+    nums = RmudItem.where("#{field} like ?", text).count
     if n < 0
       if ((niz < 0) || (ver < niz) || (niz > nums))
         niz = 0
@@ -52,12 +52,12 @@ class RmudItemCommand < FireBatCommand
       kol = ver - niz
       msg = "Найдено: #{nums} "
       msg += "[#{niz+1}-#{ver}] " if nums > 0
-      RmudItem.find(:all, :conditions => ["#{field} like ?", text], :limit => kol, :offset => niz).each do |i|
+      RmudItem.where("#{field} like ?", text).limit(kol).offset(niz).each do |i|
         msg += "[#{i.name}]"
       end
       @irc.privmsg cmd.reply, msg
     else
-      if i = RmudItem.find(:first, :conditions => ["#{field} like ?", text], :offset => n)
+      if i = RmudItem.where("#{field} like ?", text).offset(n).first
         keys1 = [
           "Свойства",
           "Тип",
