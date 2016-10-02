@@ -1,8 +1,14 @@
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/StringLiterals:
+Style/Documentation:
   Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 15
 
 Style/GlobalVars:
   Exclude:

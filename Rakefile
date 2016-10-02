@@ -57,11 +57,11 @@ namespace :db do
     load_modules
 
     establish_connection(
-      adapter:  "mysql2",
-      host:     "localhost",
-      username: "root",
-      password: "",
-      database: "rmudbot"
+      adapter:  'mysql2',
+      host:     'localhost',
+      username: 'root',
+      password: '',
+      database: 'rmudbot'
     )
 
     [
@@ -79,17 +79,17 @@ namespace :db do
     end
   end
 
-  desc "Fix postgresql sequences."
+  desc 'Fix postgresql sequences.'
   task :fix_pg_seq do
     load_modules
 
     {
-      RmudItemCommand::RmudItem => "rmud_items_id_seq",
-      SowAdditemCommand::SowItem => "sow_items_id_seq",
-      QuoteCommand::Quote => "quotes_id_seq",
-      BorCommand::Borquote => "borquotes_id_seq",
-      FireBatCommand::User => "users_id_seq",
-      FireBatCommand::Role => "roles_id_seq"
+      RmudItemCommand::RmudItem => 'rmud_items_id_seq',
+      SowAdditemCommand::SowItem => 'sow_items_id_seq',
+      QuoteCommand::Quote => 'quotes_id_seq',
+      BorCommand::Borquote => 'borquotes_id_seq',
+      FireBatCommand::User => 'users_id_seq',
+      FireBatCommand::Role => 'roles_id_seq'
     }.each_pair do |klass, seq|
       ActiveRecord::Base.connection.execute(
         "ALTER SEQUENCE #{seq} RESTART WITH #{klass.last.id + 1};"
