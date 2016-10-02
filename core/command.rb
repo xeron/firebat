@@ -60,11 +60,7 @@ module FireBat
     end
 
     def reply
-      if params[0] =~ /^#/
-        params[0]
-      else
-        nick
-      end
+      params[0] =~ /^#/ ? params[0] : nick
     end
 
     def user
