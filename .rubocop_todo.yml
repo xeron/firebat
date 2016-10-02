@@ -1,0 +1,16 @@
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/GlobalVars:
+  Exclude:
+    - 'main.rb'
+    - 'core/config.rb'
+    - 'core/database.rb'
+
+Lint/Eval:
+  Exclude:
+    - 'main.rb'
+    - 'Rakefile'
