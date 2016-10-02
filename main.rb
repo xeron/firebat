@@ -1,6 +1,6 @@
-$:.unshift File.dirname(__FILE__)
+$LOAD_PATH.unshift File.dirname(__FILE__)
 
-raise "Connection id must be numeric." if ARGV[0] && ARGV[0] !~ /\d+/
+raise 'Connection id must be numeric.' if ARGV[0] && ARGV[0] !~ /\d+/
 conn_id = ARGV[0].to_i || 0
 
 # Load core modules
@@ -8,25 +8,25 @@ require 'core/irc'
 include FireBat
 
 # Load config
-bot_conf = $config["irc"][conn_id]
+bot_conf = $config['irc'][conn_id]
 raise "Config #{conn_id} not found." unless bot_conf
 
 bot = IRC.new(bot_conf)
 bot.connect
 bot.rehash
-puts "Starting..."
+puts 'Starting...'
 bot.nickserv "identify #{bot_conf[:nspassword]}"
 bot.multi_join(bot_conf[:channels])
 
 # bot.privmsg "#firebatbot", "test: " + (Time.now + 1.year + 29.days).to_s
 
-if ENV["FIREBAT_REPL"] == "1"
-  puts "Starting REPL..."
-  print "FireBat5>"
+if ENV['FIREBAT_REPL'] == '1'
+  puts 'Starting REPL...'
+  print 'FireBat5>'
   STDOUT.flush
   while STDIN.gets
     begin
-      p eval($_)
+      p eval($LAST_READ_LINE)
     rescue SyntaxError => ex
       puts "Error in command! #{ex}"
       print ex.backtrace.join("\n")
@@ -35,7 +35,7 @@ if ENV["FIREBAT_REPL"] == "1"
       print ex.backtrace.join("\n")
     end
     puts
-    print "FireBat5>"
+    print 'FireBat5>'
     STDOUT.flush
   end
 end
