@@ -1,5 +1,4 @@
 module FireBat
-
   ActiveRecord::Base.logger = Logger.new(STDOUT)
 
   ActiveRecord::Base.establish_connection($config['database'])
@@ -12,5 +11,4 @@ module FireBat
 
   class Ident < ActiveRecord::Base
   end
-
 end
