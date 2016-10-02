@@ -1,4 +1,11 @@
+FireBat files:
 config/firebat.config.yml
 log/*.log
-.DS_Store
 *.sql
+
+# Ignore bundler config and gems.
+/.bundle
+/bundle
+
+# Mac
+.DS_Store
