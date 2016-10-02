@@ -3,7 +3,7 @@
 class QuoteCommand < FireBatCommand
 
   def on_privmsg(cmd)
-    count = Quote.count(:channel => cmd.args(0))
+    count = Quote.where(channel: cmd.args(0)).count
     n = @arg.to_i - 1
 
     case @com
