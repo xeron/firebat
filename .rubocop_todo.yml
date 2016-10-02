@@ -14,6 +14,10 @@ Style/GuardClause:
   Exclude:
     - 'core/command.rb'
 
+Metrics/AbcSize:
+  Exclude:
+    - 'core/events.rb'
+
 Style/GlobalVars:
   Exclude:
     - 'main.rb'
