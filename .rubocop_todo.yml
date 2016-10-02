@@ -10,6 +10,10 @@ Style/ClassAndModuleChildren:
 Metrics/MethodLength:
   Max: 15
 
+Style/GuardClause:
+  Exclude:
+    - 'core/command.rb'
+
 Style/GlobalVars:
   Exclude:
     - 'main.rb'

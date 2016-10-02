@@ -1,52 +1,62 @@
-# coding: utf-8
-
 module FireBat
   class Command
-
     attr_reader :params, :nick, :ident, :host, :cmd, :src
 
     def initialize(text)
       @src = text.chomp
       # parsing raw command to prefix, command name and params
       if text =~ /^(:(\S+) +)?(\S+) (.*?)[\r\n]?$/u
-        prefix, @cmd, pars = $2, $3, $4
-        @params = []
+        prefix = Regexp.last_match[2]
+        @cmd = Regexp.last_match[3]
+        pars = Regexp.last_match[4]
+
         # parse prefix for nick ident and host
-        if prefix =~ /(\S+)!(\S+)@(\S+)/u
-          @nick, @ident, @host = $1, $2, $3
-        end
+        parse_prefix(prefix)
+
         # parse params to array of its
-        if pars =~ /^(?:(.*?) )?:(.*)$/u # this test works only if last parameter have : prefix
-          p1, p2 = $1, $2
-          @params = p1 ? (p1.split " ") + [p2] : [p2]
-        else
-          # pars cannot be parsed in that way. Maybe it is last parameter?
-          @params = pars.split " "
-        end
+        parse_params(pars)
+      end
+    end
+
+    def parse_prefix(prefix)
+      if prefix =~ /(\S+)!(\S+)@(\S+)/u
+        @nick = Regexp.last_match[1]
+        @ident = Regexp.last_match[2]
+        @host = Regexp.last_match[3]
+      end
+    end
+
+    def parse_params(pars)
+      # this test works only if last parameter have : prefix
+      if pars =~ /^(?:(.*?) )?:(.*)$/u
+        p1 = Regexp.last_match[1]
+        p2 = Regexp.last_match[2]
+        @params = p1 ? (p1.split ' ') + [p2] : [p2]
+      else
+        # pars cannot be parsed in that way. Maybe it is last parameter?
+        @params = pars.split ' '
       end
     end
 
     def code
       if cmd
-        if IRC.metadata
-          ext = IRC.metadata[:command_codes][cmd]
-        end
+        ext = IRC.metadata[:command_codes][cmd] if IRC.metadata
         ext || cmd.downcase
       else
-        "command not found"
+        'command not found'
       end
     end
 
     def args(i, j = nil)
       if j
-        params[i].split(" ")[j]
+        params[i].split(' ')[j]
       else
         params[i]
       end
     end
 
     def args_tail(i, j)
-      params[i].split(" ", j + 1)[j].to_s
+      params[i].split(' ', j + 1)[j].to_s
     end
 
     def reply
@@ -58,18 +68,19 @@ module FireBat
     end
 
     def user
-      if @user
-        @user
-      else
-        @user = User.find_by_name(nick)
-      end
+      @user ||= User.find_by_name(nick)
     end
-
   end
 end
 
-if $0 == __FILE__
-  p Command.new(":PRIVMSG user!user@user  #x-19-x :!дикей - тест").args_tail(1,3) == ""
-  p Command.new(":PRIVMSG user!user@user  #x-19-x :!дикей - тест тест").args_tail(1,3) == "тест"
-  p Command.new(":Xeron!~atashi|wa@88.80.36.76 PART #vibration").args(0) == "#vibration"
+if $PROGRAM_NAME == __FILE__
+  p FireBat::Command.new(
+    ':PRIVMSG user!user@user  #x-19-x :!дикей - тест'
+  ).args_tail(1, 3) == ''
+  p FireBat::Command.new(
+    ':PRIVMSG user!user@user  #x-19-x :!дикей - тест тест'
+  ).args_tail(1, 3) == 'тест'
+  p FireBat::Command.new(
+    ':Xeron!~atashi|wa@88.80.36.76 PART #vibration'
+  ).args(0) == '#vibration'
 end
