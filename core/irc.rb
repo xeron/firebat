@@ -5,6 +5,7 @@ require 'socket'
 require 'pp'
 require 'yaml'
 require 'open-uri'
+require 'English'
 
 require 'core/config'
 require 'core/command'

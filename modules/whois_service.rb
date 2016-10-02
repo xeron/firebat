@@ -1,14 +1,14 @@
 # Служба для выполнения команды whois
 # Использование:
-#     @irc.service(WhoisService).work(nick_to_whois) do |whois|
-#        #работа над whois. Сработает когда придет весь ответ на whois
-#    end
+#   @irc.service(WhoisService).work(nick_to_whois) do |whois|
+#     #работа над whois. Сработает когда придет весь ответ на whois
+#   end
 #   whois.status - результат. если nil то была ошибка.
 class WhoisService < FireBatCommand
 
   # Внутренний класс - структура whois-а
   class Whois
-    attr_accessor :nick,:channels,:idle,:name,:host,:ident,:server,:server_info,:status
+    attr_accessor :nick, :channels, :idle, :name, :host, :ident, :server, :server_info, :status
   end
 
   # Дополнение конструктора. Создадим @ans и @block на случай,
