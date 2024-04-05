@@ -41,7 +41,7 @@ class BorCommand < FireBatCommand
   class Borquote < ActiveRecord::Base
   end
 
-  class Borquote::Install < ActiveRecord::Migration
+  class Borquote::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :borquotes do |t|
         t.column :num,  :integer

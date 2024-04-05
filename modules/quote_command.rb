@@ -40,7 +40,7 @@ class QuoteCommand < FireBatCommand
   class Quote < ActiveRecord::Base
   end
 
-  class Quote::Install < ActiveRecord::Migration
+  class Quote::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :quotes do |t|
         t.column :by, :string, :limit => 30

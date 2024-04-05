@@ -113,7 +113,7 @@ class SowItemCommand < FireBatCommand
   class SowItem < ActiveRecord::Base
   end
 
-  class SowItem::Install < ActiveRecord::Migration
+  class SowItem::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :sow_items do |t|
         t.column :name, :string, :limit => 60

@@ -1,5 +1,5 @@
 module FireBat
-  class Install < ActiveRecord::Migration
+  class Install < ActiveRecord::Migration[7.1]
 
     def self.up
       table_up User, :users do |t|

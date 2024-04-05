@@ -92,7 +92,7 @@ Actions:
   class Dekei < ActiveRecord::Base
   end
 
-  class Dekei::Install < ActiveRecord::Migration
+  class Dekei::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :dekeis do |t|
         t.string :by, :limit => 30

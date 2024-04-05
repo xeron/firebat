@@ -69,7 +69,7 @@ class PkCommand < FireBatCommand
   class Pk < ActiveRecord::Base
   end
 
-  class Pk::Install < ActiveRecord::Migration
+  class Pk::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :pks do |t|
         t.column :by, :string, limit: 30

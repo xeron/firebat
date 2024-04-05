@@ -119,7 +119,7 @@ class SeenCommand < FireBatCommand
   class Seen < ActiveRecord::Base
   end
 
-  class Seen::Install < ActiveRecord::Migration
+  class Seen::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :seens do |t|
         t.column :nick, :string, :limit => 30

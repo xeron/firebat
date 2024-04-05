@@ -95,7 +95,7 @@ class RmudItemCommand < FireBatCommand
   class RmudItem < ActiveRecord::Base
   end
 
-  class RmudItem::Install < ActiveRecord::Migration
+  class RmudItem::Install < ActiveRecord::Migration[7.1]
     def self.up
       create_table :rmud_items do |t|
         t.column :name, :string, :limit => 60

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  ngircd:
+    image: linuxserver/ngircd:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./docker/ngircd/:/config
+    ports:
+      - 6667:6667

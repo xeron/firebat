@@ -15,7 +15,7 @@ bot = IRC.new(bot_conf)
 bot.connect
 bot.rehash
 puts 'Starting...'
-bot.nickserv "identify #{bot_conf[:nspassword]}"
+bot.nickserv "identify #{bot_conf[:nspassword]}" unless bot_conf[:nspassword].nil?
 bot.multi_join(bot_conf[:channels])
 
 # bot.privmsg "#firebatbot", "test: " + (Time.now + 1.year + 29.days).to_s
